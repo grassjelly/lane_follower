@@ -1,0 +1,13 @@
+<launch>
+
+    <node name="usb_cam" type="usb_cam_node" pkg="usb_cam" output="screen" >
+        <param name="video_device" value="/dev/video2"/>
+        <param name="pixel_format" value="yuyv" />
+        <param name="image_width" value="320" />
+        <param name="image_height" value="120" />
+        <param name="framerate" value="20" />
+    </node>
+
+    <node name="lane_follower_collector" type="collect_data.py" pkg="lane_follower" output="screen" />
+
+</launch>
