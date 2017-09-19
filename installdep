@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+sudo apt-get install -y ros-indigo-compressed-image-transport
+sudo pip install scikit-learn
