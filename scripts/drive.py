@@ -16,7 +16,7 @@ class NeuralNetwork(object):
     def create(self):
         layer_size = np.int32([38400, 32, 4])
         self.model.create(layer_size)
-        self.model.load('mlp_xml/mlp.xml')
+        self.model.load('mlp.xml')
 
     def predict(self, samples):
         ret, resp = self.model.predict(samples)
@@ -43,7 +43,7 @@ class Drive():
         temp_image_array = roi.reshape(1, 38400).astype(np.float32)
 
         prediction = self.model.predict(temp_image_array)
-        drive(prediction)
+        self.drive(prediction)
 
     def drive(self, prediction):
         cmd = Twist()
