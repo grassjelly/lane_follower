@@ -16,7 +16,8 @@ class NeuralNetwork(object):
     def create(self):
         layer_size = np.int32([38400, 32, 4])
         self.model.create(layer_size)
-        self.model.load('mlp_xml/mlp.xml')
+        self.model.load('/home/juan/nn_ws/src/lane_follower/scripts/mlp.xml')
+        print "loaded"
 
     def predict(self, samples):
         ret, resp = self.model.predict(samples)
@@ -25,8 +26,8 @@ class NeuralNetwork(object):
 class Drive():
 
     def __init__(self):
-        self.cmd_pub = rospy.Publisher('cmd_vel', Twist, queue_size=10)
-        rospy.Subscriber("usb_cam/image_raw/compressed", CompressedImage, self.img_callback)
+        self.cmd_pub = rospy.Publisher('cmd_vel_mux/input/teleop', Twist, queue_size=10)
+        rospy.Subscriber("camera/rgb/image_raw/compressed", CompressedImage, self.img_callback)
 
         self.image_array = np.zeros((1, 38400))
         self.label_array = np.zeros((1, 4), 'float')
@@ -43,23 +44,23 @@ class Drive():
         temp_image_array = roi.reshape(1, 38400).astype(np.float32)
 
         prediction = self.model.predict(temp_image_array)
-        drive(prediction)
+        self.drive(prediction)
 
     def drive(self, prediction):
         cmd = Twist()
 
         #forward
         if prediction == 2:
-            cmd.linear.x = 0.5
+            cmd.linear.x = 0.2
 
         #steer left
         elif prediction == 0:
-            cmd.linear.x = 0.5
+            cmd.linear.x = 0.2
             cmd.angular.z = 1.0
 
         #steer right
         elif prediction == 1:
-            cmd.linear.x = 0.5
+            cmd.linear.x = 0.2
             cmd.angular.z = -1.0
 
         #stop

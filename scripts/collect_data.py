@@ -9,12 +9,17 @@ import os
 import rospy
 from geometry_msgs.msg import Twist
 from sensor_msgs.msg import CompressedImage
+from std_msgs.msg import Bool
 
 class CollectDrivingData():
 
     def __init__(self):
-        rospy.Subscriber("cmd_vel", Twist, self.cmd_callback)
-        rospy.Subscriber("usb_cam/image_raw/compressed", CompressedImage, self.img_callback)
+        # rospy.Subscriber("cmd_vel", Twist, self.cmd_callback)
+        # rospy.Subscriber("usb_cam/image_raw/compressed", CompressedImage, self.img_callback)
+
+        rospy.Subscriber("cmd_vel_mux/input/teleop", Twist, self.cmd_callback)
+        rospy.Subscriber("camera/rgb/image_raw/compressed", CompressedImage, self.img_callback)
+        rospy.Subscriber("save_data", Bool, self.save_callback)
 
         self.temp_image_array = 0.0
         self.image_array = np.zeros((1, 38400))
@@ -28,6 +33,13 @@ class CollectDrivingData():
         for i in range(4):
             self.k[i, i] = 1            
 
+    def save_callback(self,data):
+        #rostopic pub save_data std_msgs/Bool true -1
+        if(data.data):
+            print "Saving data"
+            self.save_collected_data()
+
+
     def cmd_callback(self, data):
         linear_velocity = data.linear.x
         angular_velocity = data.angular.z
@@ -36,9 +48,6 @@ class CollectDrivingData():
         # rospy.loginfo("ANGULAR CMD: %f" , angular_velocity)
         # rospy.loginfo("SAVED FRAME: %f" , self.saved_frame)
         # rospy.loginfo("TOTAL FRAME: %f" , self.total_frame)
-
-        if trigger != 0.0:
-            self.save_collected_data()
 
         #steer right
         if linear_velocity > 0.0 and angular_velocity < 0.0:
@@ -71,6 +80,8 @@ class CollectDrivingData():
         image = cv2.imdecode(np_arr, cv2.CV_LOAD_IMAGE_GRAYSCALE)
 
         roi = image[120:240, :]
+        cv2.imshow('image', image)
+
         self.temp_image_array = roi.reshape(1, 38400).astype(np.float32)
 
         self.frame += 1                    

@@ -15,7 +15,7 @@ image_array = np.zeros((1, 38400))
 label_array = np.zeros((1, 4), 'float')
 
 #TODO: parametize this
-training_data = glob.glob('/home/juan/nn_ws/1505816287.npz')
+training_data = glob.glob('/home/juan/nn_ws/1506059782.npz')
 
 # if no data, exit
 if not training_data:

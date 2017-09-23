@@ -9,6 +9,7 @@ project(lane_follower)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   sensor_msgs
+  std_msgs
   geometry_msgs
   rospy
 )
