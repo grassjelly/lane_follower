@@ -75,6 +75,6 @@ def main():
 
 if __name__ == '__main__':
     rospy.init_node('lane_follower', anonymous=True)
-    print "Start Driving to collect data"
+    print "Driving..."
     Drive()
     main()
